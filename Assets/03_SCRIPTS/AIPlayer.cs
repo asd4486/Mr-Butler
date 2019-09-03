@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class AIPlayer : MonoBehaviour
 {
-    bool isGameStart;
-
     UIPlayer uiPlayer;
+    GameMain main;
 
     Rigidbody rb;
     bool isWalkLeft;
@@ -26,13 +25,13 @@ public class AIPlayer : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         uiPlayer = FindObjectOfType<UIPlayer>();
+        main = FindObjectOfType<GameMain>();
     }
 
     // Update is called once per frame
     void Update()
     {
         InputController();
-
         CheckDead();
     }
 
@@ -40,10 +39,10 @@ public class AIPlayer : MonoBehaviour
     {
         if (isWalkLeft && isWalkRight)
         {
-            if (!isGameStart) isGameStart = true;
+            main.StartGame();
         }
 
-        if (!isGameStart) return;
+        if (!main.isGameStart) return;
 
         if (isWalkLeft && !isWalkRight)
         {
@@ -80,7 +79,7 @@ public class AIPlayer : MonoBehaviour
 
     void CheckDead()
     {
-        if (!isGameStart) return;
+        if (!main.isGameStart) return;
 
         if (isWalkLeft || isWalkRight)
         {
@@ -89,8 +88,8 @@ public class AIPlayer : MonoBehaviour
         }
 
         deadTimer += Time.deltaTime;
-        if (deadTimer >= deadTime)
-            Debug.Log("dead");
+        //reload game when dead
+        if (deadTimer >= deadTime) main.Reload();
     }
 
     private void OnTriggerEnter(Collider other)

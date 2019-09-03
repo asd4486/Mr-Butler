@@ -5,18 +5,20 @@ using UnityEngine.UI;
 
 public class UIPlayer : MonoBehaviour
 {
-    
     [SerializeField] Text textScore;
     [SerializeField] Text textTimer;
-    public float timeLeft = 60.0f;
+    [SerializeField] float timeLeft = 60.0f;
 
+    GameMain main;
     //// Start is called before the first frame update
     void Start()
     {
+        main = FindObjectOfType<GameMain>();
         SetScore(0);
     }
 
-    void Update(){
+    void Update()
+    {
         SetTimer();
     }
 
@@ -28,11 +30,10 @@ public class UIPlayer : MonoBehaviour
     public void SetTimer()
     {
         timeLeft -= Time.deltaTime;
-        textTimer.text ="Timer : "+ (timeLeft).ToString("0");
+        textTimer.text = "Timer : " + (timeLeft).ToString("0");
         if (timeLeft < 0)
         {
             Debug.Log("Dead");
         }
     }
-    
 }

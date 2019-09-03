@@ -1,18 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameMain : MonoBehaviour
 {
+    [HideInInspector] public bool isGameStart;
+    [SerializeField] GameObject startScreen;
+ 
     [SerializeField] GameObject customerPrefab;
 
     [SerializeField] int customerTotal = 10;
     [SerializeField] float spawnSizeOffset;
 
     // Start is called before the first frame update
-    void Start()
+    public void StartGame()
     {
+        if(isGameStart) return;
+        isGameStart = true;
+        startScreen.SetActive(false);
         SpawnCustomers();
+    }
+
+    public void Reload()
+    {
+        SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
 
     void SpawnCustomers()
