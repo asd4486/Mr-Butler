@@ -27,19 +27,19 @@ public class AIPlayer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            isWalkLeft = true;
+            isWalkRight = true;
         }
         if (Input.GetMouseButtonDown(1))
         {
-            isWalkRight = true;
+            isWalkLeft = true;
         }
         if (Input.GetMouseButtonUp(0))
         {
-            isWalkLeft = false;
+            isWalkRight = false;
         }
         if (Input.GetMouseButtonUp(1))
         {
-            isWalkRight = false;
+            isWalkLeft = false;
         }
 
 
