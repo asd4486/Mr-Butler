@@ -19,6 +19,7 @@ public class UIPlayer : MonoBehaviour
 
     void Update()
     {
+        if (!main.isGameStart) return;
         SetTimer();
     }
 
