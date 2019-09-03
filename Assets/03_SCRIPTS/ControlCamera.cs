@@ -6,16 +6,25 @@ public class ControlCamera : MonoBehaviour
 {
     Transform playerTransform;
 
-    // Start is called before the first frame update
-    void Awake()
+    private Vector3 offset;
+
+    //float distance;
+    Vector3 playerPrevPos, playerMoveDir;
+    [SerializeField] float camY;
+
+    // Use this for initialization
+    void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("butler").transform;
+        offset = transform.position - playerTransform.position;
+
+        playerPrevPos = playerTransform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        transform.eulerAngles = new Vector3(90, playerTransform.eulerAngles.y, 0);
-        transform.position = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
+        var pos = playerTransform.position + (-playerTransform.forward * offset.magnitude);
+        transform.position = new Vector3(pos.x, camY, pos.z);
+        transform.LookAt(playerTransform.position);
     }
 }

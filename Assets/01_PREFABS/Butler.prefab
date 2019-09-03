@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 495048795291378270}
   - component: {fileID: 495048795291378271}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Butler
   m_TagString: butler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -123,5 +123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f12ab4f8e0a06b4ab4a32b3db3b4cb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  turnSpeed: 1.5
+  walkSpeed: 8
+  turnSpeed: 2
+  deadTime: 0.5

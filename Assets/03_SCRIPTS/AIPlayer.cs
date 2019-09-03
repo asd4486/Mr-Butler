@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AIPlayer : MonoBehaviour
 {
+    bool isGameStart;
+
     UIPlayer uiPlayer;
 
     Rigidbody rb;
@@ -13,7 +15,11 @@ public class AIPlayer : MonoBehaviour
     [SerializeField] float walkSpeed;
     [SerializeField] float turnSpeed;
 
+    float deadTimer;
+    [SerializeField] float deadTime = 0.5f;
+
     int myScore;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +31,35 @@ public class AIPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        InputController();
+
+        CheckDead();
+    }
+
+    private void FixedUpdate()
+    {
+        if (isWalkLeft && isWalkRight)
+        {
+            if (!isGameStart) isGameStart = true;
+        }
+
+        if (!isGameStart) return;
+
+        if (isWalkLeft && !isWalkRight)
+        {
+            transform.Rotate(0, -turnSpeed, 0);
+        }
+        else if (!isWalkLeft && isWalkRight)
+        {
+            transform.Rotate(0, turnSpeed, 0);
+        }
+
+        rb.velocity = transform.forward * walkSpeed;
+    }
+
+    void InputController()
+    {
+        // player controller
         if (Input.GetMouseButtonDown(0))
         {
             isWalkRight = true;
@@ -41,19 +76,21 @@ public class AIPlayer : MonoBehaviour
         {
             isWalkLeft = false;
         }
+    }
 
+    void CheckDead()
+    {
+        if (!isGameStart) return;
 
-        if (isWalkLeft && !isWalkRight)
+        if (isWalkLeft || isWalkRight)
         {
-            transform.Rotate(0, -turnSpeed, 0);
-        }
-        else if (!isWalkLeft && isWalkRight)
-        {
-            transform.Rotate(0, turnSpeed, 0);
+            deadTimer = 0;
+            return;
         }
 
-        if (!isWalkLeft && !isWalkRight) Debug.Log("dead");
-        else rb.velocity = transform.forward * walkSpeed;
+        deadTimer += Time.deltaTime;
+        if (deadTimer >= deadTime)
+            Debug.Log("dead");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -68,9 +105,8 @@ public class AIPlayer : MonoBehaviour
                     break;
                 case CustomerStatus.Ordering:
                     myScore += 1;
+                    customer.OrderComplete();
                     break;
-                    //case CustomerStatus.Eating:
-                    //    break;
             }
 
             uiPlayer.SetScore(myScore);
