@@ -12,6 +12,8 @@ public enum CustomerStatus
 
 public class AICustomer : MonoBehaviour
 {
+    GameMain main;
+
     Material myMat;
     [HideInInspector] public CustomerStatus myStatus;
     [SerializeField] Image waitBar;
@@ -19,15 +21,22 @@ public class AICustomer : MonoBehaviour
     float changeStatusTimer;
     float nextStatusTime;
 
+    private void Awake()
+    {
+        main = FindObjectOfType<GameMain>();
+        myMat = GetComponentInChildren<MeshRenderer>().material;
+    }
+
     // Start is called before the first frame update
     void Start()
-    {
-        myMat = GetComponentInChildren<MeshRenderer>().material;
+    {     
         SetNextStatusInfos();
     }
 
     private void Update()
     {
+        if (!main.isGameStart) return;
+
         changeStatusTimer += Time.deltaTime;
         SetOrderTimerFill();
         
@@ -50,7 +59,7 @@ public class AICustomer : MonoBehaviour
         switch (myStatus)
         {
             case CustomerStatus.NoOrder:
-                myMat.color = Color.red;
+                myMat.color = Color.green;
                 nextStatusTime = 2;
                 break;
             case CustomerStatus.Ordering:
@@ -58,7 +67,7 @@ public class AICustomer : MonoBehaviour
                 nextStatusTime = 5;
                 break;
             case CustomerStatus.Eating:
-                myMat.color = Color.green;
+                myMat.color = Color.red;
                 nextStatusTime = 2;
                 break;
         }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - customer
   - butler
+  - enemy
   layers:
   - Default
   - TransparentFX

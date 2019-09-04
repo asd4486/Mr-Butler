@@ -457,12 +457,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d995631022d865b4aacf2e3df5d43792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeLeft: 45
   isGameStart: 0
   startScreen: {fileID: 281498996}
   customerPrefab: {fileID: 5507506391214837961, guid: 3697a4422df31094d88453e4b8dfff9d,
     type: 3}
   customerTotal: 12
-  spawnSizeOffset: 40
+  enemyPrefab: {fileID: 1499556702418681205, guid: a01509a99cd959f4baa1263892c2aadf,
+    type: 3}
+  enemyTotal: 4
+  spawnSizeOffset: 45
 --- !u!1 &1205511037
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,6 +624,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1761282514}
+    - target: {fileID: 2096847917, guid: 2745507f3860e5a4496405bb44ad727f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -74.99988
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2745507f3860e5a4496405bb44ad727f, type: 3}
 --- !u!1 &1469635433
