@@ -115,7 +115,7 @@ public class AIPlayer : MonoBehaviour
         if (collision.gameObject.tag == "enemy")
         {
             rb.velocity = Vector3.zero;
-            rb.AddForce(-transform.forward * 15000);
+            rb.AddForce(-transform.forward * 20000);
 
             StartCoroutine(StartStunCoroutine());
         }
