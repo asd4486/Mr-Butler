@@ -7,6 +7,7 @@ public class AIPlayer : MonoBehaviour
     UIPlayer uiPlayer;
     GameMain main;
 
+    Animator myAnimator;
     Rigidbody rb;
 
     float distToGround;
@@ -22,12 +23,14 @@ public class AIPlayer : MonoBehaviour
 
     float deadTimer;
     [SerializeField] float deadTime = 0.5f;
+    [SerializeField] float pushForce;
 
     int myScore;
 
     // Start is called before the first frame update
     void Start()
     {
+        myAnimator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
 
         uiPlayer = FindObjectOfType<UIPlayer>();
@@ -51,9 +54,10 @@ public class AIPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isWalkLeft && isWalkRight)
+        if (isWalkLeft && isWalkRight && !main.isGameStart)
         {
             main.StartGame();
+            myAnimator.SetTrigger("walk");
         }
 
         if (!main.isGameStart || isStun) return;
@@ -107,7 +111,16 @@ public class AIPlayer : MonoBehaviour
 
         deadTimer += Time.deltaTime;
         //reload game when dead
-        if (deadTimer >= deadTime) main.GameOver();
+        if (deadTimer >= deadTime)
+        {
+            myAnimator.SetTrigger("idle");
+            main.GameOver();
+        }
+    }
+
+    public void AddSpeed(float speed)
+    {
+        walkSpeed += speed;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -115,7 +128,7 @@ public class AIPlayer : MonoBehaviour
         if (collision.gameObject.tag == "enemy")
         {
             rb.velocity = Vector3.zero;
-            rb.AddForce(-transform.forward * 20000);
+            rb.AddForce(-transform.forward * pushForce * 1000);
 
             StartCoroutine(StartStunCoroutine());
         }
@@ -124,7 +137,7 @@ public class AIPlayer : MonoBehaviour
     IEnumerator StartStunCoroutine()
     {
         isStun = true;
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.5f);
         isStun = false;
     }
 

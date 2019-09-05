@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public enum CustomerStatus
@@ -13,10 +11,25 @@ public enum CustomerStatus
 public class AICustomer : MonoBehaviour
 {
     GameMain main;
+    [SerializeField] Animator myAnimator;
 
-    Material myMat;
+    [SerializeField] Transform customerGroup;
+    GameObject customerUI;
+
+    Transform cameraTransform;
+
+    [SerializeField] Text exclamationPoint;
     [HideInInspector] public CustomerStatus myStatus;
     [SerializeField] Image waitBar;
+
+    [SerializeField] GameObject customerSprite;
+    Material customerMat;
+
+    [SerializeField] ParticleSystem fxStar;
+
+    [SerializeField] Texture2D texNoOrder;
+    [SerializeField] Texture2D texOrdering;
+    [SerializeField] Texture2D texEating;
 
     float changeStatusTimer;
     float nextStatusTime;
@@ -24,23 +37,32 @@ public class AICustomer : MonoBehaviour
     private void Awake()
     {
         main = FindObjectOfType<GameMain>();
-        myMat = GetComponentInChildren<MeshRenderer>().material;
+
+        customerUI = customerGroup.GetComponentInChildren<Canvas>().gameObject;
+        customerUI.SetActive(false);
+
+        cameraTransform = Camera.main.transform;
+
+        customerMat = customerSprite.GetComponent<MeshRenderer>().material;
     }
 
     // Start is called before the first frame update
     void Start()
-    {     
+    {
         SetNextStatusInfos();
     }
 
     private void Update()
     {
+        //customerGroup.LookAt(cameraTransform);
+        customerGroup.eulerAngles = new Vector3(0, cameraTransform.eulerAngles.y, 0);
+
         if (!main.isGameStart) return;
 
         changeStatusTimer += Time.deltaTime;
         SetOrderTimerFill();
-        
-        if(changeStatusTimer > nextStatusTime)
+
+        if (changeStatusTimer > nextStatusTime)
         {
             myStatus = (CustomerStatus)Random.Range(0, 2);
             SetNextStatusInfos();
@@ -49,7 +71,7 @@ public class AICustomer : MonoBehaviour
 
     void SetOrderTimerFill()
     {
-        if(myStatus == CustomerStatus.NoOrder) return;
+        if (myStatus == CustomerStatus.NoOrder) return;
         waitBar.fillAmount = (nextStatusTime - changeStatusTimer) / nextStatusTime;
     }
 
@@ -59,23 +81,34 @@ public class AICustomer : MonoBehaviour
         switch (myStatus)
         {
             case CustomerStatus.NoOrder:
-                myMat.color = Color.green;
+                customerMat.mainTexture = texNoOrder;
+                customerUI.SetActive(false);
                 nextStatusTime = 2;
+
+                myAnimator.SetTrigger("idle");
                 break;
             case CustomerStatus.Ordering:
-                myMat.color = Color.blue;
+                customerMat.mainTexture = texOrdering;
+                customerUI.SetActive(true);
+                exclamationPoint.color = waitBar.color = Color.green;
                 nextStatusTime = 5;
+
+                myAnimator.SetTrigger("ordering");
                 break;
             case CustomerStatus.Eating:
-                myMat.color = Color.red;
+                customerMat.mainTexture = texEating;
+                exclamationPoint.color = waitBar.color = Color.red;
                 nextStatusTime = 2;
+
+                myAnimator.SetTrigger("eating");
                 break;
         }
     }
-    
+
     public void OrderComplete()
     {
         myStatus = CustomerStatus.Eating;
+        fxStar.Play();
         SetNextStatusInfos();
     }
 }

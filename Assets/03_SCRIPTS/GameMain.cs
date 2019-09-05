@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class GameMain : MonoBehaviour
 {
+    AIPlayer aiPlayer;
     UIPlayer uiPlayer;
-
-    [SerializeField] float timeLeft = 60.0f;
 
     [HideInInspector] public bool isGameStart;
     bool isGameOver;
@@ -21,9 +20,15 @@ public class GameMain : MonoBehaviour
 
     [SerializeField] float spawnSizeOffset;
 
+    float addDifficultyTimer;
+    [SerializeField] float nextDifficultyDelay;
+
     private void Awake()
     {
+        aiPlayer = FindObjectOfType<AIPlayer>();
         uiPlayer = FindObjectOfType<UIPlayer>();
+
+        addDifficultyTimer = nextDifficultyDelay;
         startScreen.SetActive(true);
     }
 
@@ -67,13 +72,20 @@ public class GameMain : MonoBehaviour
     {
         for (int i = 0; i < enemyTotal; i++)
         {
-            var pos = new Vector3(Random.Range(-spawnSizeOffset, spawnSizeOffset), 1, Random.Range(-spawnSizeOffset, spawnSizeOffset));
-            while (!CheckEnemyPos(pos))
-            {
-                pos = new Vector3(Random.Range(-spawnSizeOffset, spawnSizeOffset), 1, Random.Range(-spawnSizeOffset, spawnSizeOffset));
-            }
-            var o = Instantiate(enemyPrefab, pos, Quaternion.identity);
+            SpawnAEnemy();
         }
+    }
+
+    GameObject SpawnAEnemy()
+    {
+        var pos = new Vector3(Random.Range(-spawnSizeOffset, spawnSizeOffset), 1, Random.Range(-spawnSizeOffset, spawnSizeOffset));
+        while (!CheckEnemyPos(pos))
+        {
+            pos = new Vector3(Random.Range(-spawnSizeOffset, spawnSizeOffset), 1, Random.Range(-spawnSizeOffset, spawnSizeOffset));
+        }
+
+        var o = Instantiate(enemyPrefab, pos, Quaternion.identity);
+        return o;
     }
 
     //check if customer is too closes to other customer or not
@@ -87,7 +99,7 @@ public class GameMain : MonoBehaviour
         foreach (var e in enemies)
         {
             var dist = Vector3.Distance(pos, e.transform.position);
-            if (dist < 20) return false;        
+            if (dist < 20) return false;
         }
         return true;
     }
@@ -95,17 +107,38 @@ public class GameMain : MonoBehaviour
     void Update()
     {
         if (!isGameStart) return;
-        SetTimer();
+        //SetTimer();
+        AddDifficulty();
     }
 
-    public void SetTimer()
-    {
-        timeLeft -= Time.deltaTime;
-        uiPlayer.SetTimer(timeLeft);
+    //void SetTimer()
+    //{
+    //    timeLeft -= Time.deltaTime;
+    //    uiPlayer.SetTimer(timeLeft);
 
-        if (timeLeft < 0)
+    //    if (timeLeft < 0)
+    //    {
+    //        GameOver();
+    //    }
+    //}
+
+    void AddDifficulty()
+    {
+        addDifficultyTimer -= Time.deltaTime;
+        uiPlayer.SetTimer(addDifficultyTimer);
+        if (addDifficultyTimer <= 0)
         {
-            GameOver();
+            uiPlayer.LevelUp();
+            addDifficultyTimer = nextDifficultyDelay;
+
+            if (enemyTotal < 15)
+            {
+                SpawnAEnemy();
+                SpawnAEnemy();
+                enemyTotal += 2;
+            }
+
+            aiPlayer.AddSpeed(4f);
         }
     }
 

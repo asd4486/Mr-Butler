@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class AIEnemy : MonoBehaviour
 {
+    GameMain main;
     Rigidbody rb;
 
-    Vector3? targetPos;
+    Transform targetTable;
 
     [SerializeField] float mapOffset;
 
@@ -15,23 +16,32 @@ public class AIEnemy : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        main = FindObjectOfType<GameMain>();
         rb = GetComponent<Rigidbody>();
+        Physics.IgnoreLayerCollision(8, 8);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(targetPos == null)
+        if (!main.isGameStart) return;
+
+        //find random table
+        if (targetTable == null)
         {
-            targetPos = new Vector3(Random.Range(-mapOffset, mapOffset), transform.position.y, Random.Range(-mapOffset, mapOffset));
+            var tables = GameObject.FindGameObjectsWithTag("customer");
+            targetTable = tables[Random.Range(0, tables.Length)].transform;
         }
         //enemy mover to target
         else
         {
-            rb.position = Vector3.MoveTowards(rb.position, targetPos.Value, walkSpeed * Time.deltaTime);
+            transform.LookAt(targetTable);
+            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
-            var dist = Vector3.Distance(rb.position, targetPos.Value);
-            if (dist < 0.1f) targetPos = null;
+            rb.position = Vector3.MoveTowards(rb.position, targetTable.position, walkSpeed * Time.deltaTime);
+
+            var dist = Vector3.Distance(rb.position, targetTable.position);
+            if (dist < 1.5f) targetTable = null;
         }
     }
 }

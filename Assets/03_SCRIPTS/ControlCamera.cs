@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ControlCamera : MonoBehaviour
 {
+    [SerializeField] float rotX;
     Transform playerTransform;
 
     private Vector3 offset;
@@ -25,6 +26,8 @@ public class ControlCamera : MonoBehaviour
     {
         var pos = playerTransform.position + (-playerTransform.forward * offset.magnitude);
         transform.position = new Vector3(pos.x, camY, pos.z);
+
         transform.LookAt(playerTransform.position);
+        transform.eulerAngles = new Vector3(rotX, transform.eulerAngles.y, transform.eulerAngles.z);
     }
 }
